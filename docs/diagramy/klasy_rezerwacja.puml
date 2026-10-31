@@ -1,0 +1,88 @@
+@startuml klasy_rezerwacja
+!pragma layout smetana
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam classAttributeIconSize 0
+hide empty members
+title Przychodnia Popielarz - klasy modułu rezerwacji wizyt (warstwy)
+
+class AppointmentController <<RestController>> {
+  - appointmentService : AppointmentService
+  + search(patientId, doctorId, status, from, to, jwt) : List<Response>
+  + findById(id, jwt) : Response
+  + book(CreateRequest, jwt) : ResponseEntity<Response>
+  + changeStatus(id, StatusRequest, jwt) : Response
+}
+
+class AppointmentService <<Service>> {
+  - clock : Clock
+  + book(CreateRequest, CurrentUser) : Response
+  + search(..., CurrentUser) : List<Response>
+  + changeStatus(id, AppointmentStatus, CurrentUser) : Response
+  - cancel(Appointment, LocalDateTime, CurrentUser)
+  - complete(Appointment, LocalDateTime, CurrentUser)
+  - checkAccess(Appointment, CurrentUser)
+}
+
+class PatientService <<Service>> {
+  + getPatient(id) : Patient
+  + checkAccess(patientId, CurrentUser)
+}
+
+interface AppointmentRepository <<JpaRepository>> {
+  + findWithDetailsById(id) : Optional<Appointment>
+  + search(patientId, doctorId, status, from, to) : List<Appointment>
+  + patientHasAppointmentBetween(patientId, start, end) : boolean
+}
+
+interface TimeSlotRepository <<JpaRepository>> {
+  + findForDoctor(doctorId, from, to, onlyAvailable) : List<TimeSlot>
+  + existsOverlapping(doctorId, start, end) : boolean
+}
+
+class AppointmentMapper <<Component>> {
+  + toResponse(Appointment) : AppointmentDto.Response
+}
+
+class "AppointmentDto.CreateRequest" as CreateRequest <<record>> {
+  + slotId : Long
+  + patientId : Long
+  + reason : String
+}
+
+class "AppointmentDto.Response" as Response <<record>> {
+  + id : Long
+  + status : AppointmentStatus
+  + startTime : LocalDateTime
+  + doctorName : String
+  + patientName : String
+}
+
+class CurrentUser <<record>> {
+  + userId : Long
+  + username : String
+  + role : Role
+  + patientId : Long
+  + doctorId : Long
+  + {static} from(Jwt) : CurrentUser
+}
+
+class GlobalExceptionHandler <<RestControllerAdvice>> {
+  + handleNotFound(...) : 404
+  + handleConflict(...) : 409
+  + handleValidation(...) : 400
+  + handleAccessDenied(...) : 403
+}
+
+AppointmentController --> AppointmentService
+AppointmentController ..> CreateRequest
+AppointmentController ..> CurrentUser
+AppointmentService --> AppointmentRepository
+AppointmentService --> TimeSlotRepository
+AppointmentService --> PatientService
+AppointmentService --> AppointmentMapper
+AppointmentMapper ..> Response
+AppointmentController .. GlobalExceptionHandler : wyjątki
+@enduml

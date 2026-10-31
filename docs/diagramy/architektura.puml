@@ -1,0 +1,27 @@
+@startuml architektura
+!pragma layout smetana
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+title Przychodnia Popielarz - warstwy aplikacji
+
+rectangle "Klient web (static/)\nindex.html + app.js\nviews.js (widok)\napi.js (fetch)" as client
+rectangle "Swagger UI / curl" as swagger
+rectangle "Spring Security\nfiltr JWT (Bearer), STATELESS" as sec
+rectangle "Kontrolery REST\n/api/v1/... + walidacja DTO" as ctrl
+rectangle "GlobalExceptionHandler\n(@RestControllerAdvice)" as adv
+rectangle "Serwisy\nlogika i reguły biznesowe\n@Transactional" as svc
+rectangle "Mappery\nencja <-> DTO" as map
+rectangle "Repozytoria\nSpring Data JPA" as repo
+database "PostgreSQL 17\n(H2 w profilu dev/test)\nmigracje Flyway" as db
+
+client --> sec : JSON / HTTP
+swagger --> sec
+sec --> ctrl
+ctrl --> svc : DTO
+ctrl ..> adv : wyjątki
+svc --> map
+svc --> repo : encje
+repo --> db : SQL (Hibernate)
+@enduml

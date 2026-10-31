@@ -1,0 +1,88 @@
+@startuml baza_danych
+!pragma layout smetana
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam linetype ortho
+hide circle
+title Przychodnia Popielarz - schemat bazy danych (PostgreSQL)
+
+entity "specialization" as specialization {
+  <b>PK</b> id : BIGINT
+  --
+  <b>UK</b> name : VARCHAR(100)
+}
+
+entity "doctor" as doctor {
+  <b>PK</b> id : BIGINT
+  --
+  first_name : VARCHAR(60)
+  <b>IDX</b> last_name : VARCHAR(80)
+  <b>UK</b> license_number : VARCHAR(7)
+  <b>UK</b> email : VARCHAR(120)
+  phone : VARCHAR(20)
+  room : VARCHAR(10)
+  active : BOOLEAN
+}
+
+entity "doctor_specialization" as ds {
+  <b>PK, FK</b> doctor_id : BIGINT
+  <b>PK, FK, IDX</b> specialization_id : BIGINT
+}
+
+entity "time_slot" as slot {
+  <b>PK</b> id : BIGINT
+  --
+  <b>FK, UK(1)</b> doctor_id : BIGINT
+  <b>UK(1), IDX</b> start_time : TIMESTAMP
+  end_time : TIMESTAMP
+  booked : BOOLEAN
+  version : BIGINT
+  ..
+  CHECK end_time > start_time
+}
+
+entity "patient" as patient {
+  <b>PK</b> id : BIGINT
+  --
+  first_name : VARCHAR(60)
+  <b>IDX</b> last_name : VARCHAR(80)
+  <b>UK</b> pesel : VARCHAR(11)
+  <b>UK</b> email : VARCHAR(120)
+  phone : VARCHAR(20)
+  birth_date : DATE
+}
+
+entity "appointment" as appointment {
+  <b>PK</b> id : BIGINT
+  --
+  <b>FK, IDX</b> slot_id : BIGINT
+  <b>FK, IDX</b> patient_id : BIGINT
+  <b>IDX</b> status : VARCHAR(20)
+  reason : VARCHAR(500)
+  created_at : TIMESTAMP
+  cancelled_at : TIMESTAMP
+  ..
+  CHECK status IN (BOOKED, CANCELLED, COMPLETED)
+}
+
+entity "app_user" as app_user {
+  <b>PK</b> id : BIGINT
+  --
+  <b>UK</b> username : VARCHAR(50)
+  password_hash : VARCHAR(100)
+  role : VARCHAR(20)
+  enabled : BOOLEAN
+  <b>FK, UK</b> patient_id : BIGINT
+  <b>FK, UK</b> doctor_id : BIGINT
+}
+
+doctor ||--o{ ds
+specialization ||--o{ ds
+doctor ||--o{ slot
+slot ||--o{ appointment
+patient ||--o{ appointment
+patient |o--o| app_user
+doctor |o--o| app_user
+@enduml

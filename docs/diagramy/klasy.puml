@@ -1,0 +1,91 @@
+@startuml klasy
+!pragma layout smetana
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam classAttributeIconSize 0
+hide empty members
+title Przychodnia Popielarz - diagram klas modelu domenowego (pakiet model)
+
+class Specialization <<Entity>> {
+  - id : Long
+  - name : String
+}
+
+class Doctor <<Entity>> {
+  - id : Long
+  - firstName : String
+  - lastName : String
+  - licenseNumber : String
+  - email : String
+  - phone : String
+  - room : String
+  - active : boolean
+  + getFullName() : String
+  + replaceSpecializations(Set<Specialization>)
+  + deactivate()
+}
+
+class TimeSlot <<Entity>> {
+  - id : Long
+  - startTime : LocalDateTime
+  - endTime : LocalDateTime
+  - booked : boolean
+  - version : long
+  + startsBefore(LocalDateTime) : boolean
+  + markBooked()
+  + release()
+}
+
+class Appointment <<Entity>> {
+  - id : Long
+  - status : AppointmentStatus
+  - reason : String
+  - createdAt : LocalDateTime
+  - cancelledAt : LocalDateTime
+  + cancel(LocalDateTime)
+  + complete()
+  + isBooked() : boolean
+}
+
+class Patient <<Entity>> {
+  - id : Long
+  - firstName : String
+  - lastName : String
+  - pesel : String
+  - email : String
+  - phone : String
+  - birthDate : LocalDate
+  + getFullName() : String
+}
+
+class UserAccount <<Entity>> {
+  - id : Long
+  - username : String
+  - passwordHash : String
+  - role : Role
+  - enabled : boolean
+}
+
+enum AppointmentStatus {
+  BOOKED
+  CANCELLED
+  COMPLETED
+}
+
+enum Role {
+  PATIENT
+  RECEPTIONIST
+  DOCTOR
+}
+
+Doctor "0..*" -- "1..*" Specialization : specializations\n(N:M)
+Doctor "1" *-- "0..*" TimeSlot : slots\n(1:N)
+TimeSlot "1" <-- "0..*" Appointment : slot
+Patient "1" <-- "0..*" Appointment : patient\n(1:N)
+Appointment --> AppointmentStatus
+UserAccount "0..1" --> "0..1" Patient
+UserAccount "0..1" --> "0..1" Doctor
+UserAccount --> Role
+@enduml
