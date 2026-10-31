@@ -76,13 +76,13 @@ class GlobalExceptionHandler <<RestControllerAdvice>> {
   + handleAccessDenied(...) : 403
 }
 
-AppointmentController --> AppointmentService
-AppointmentController ..> CreateRequest
-AppointmentController ..> CurrentUser
-AppointmentService --> AppointmentRepository
-AppointmentService --> TimeSlotRepository
-AppointmentService --> PatientService
-AppointmentService --> AppointmentMapper
-AppointmentMapper ..> Response
-AppointmentController .. GlobalExceptionHandler : wyjątki
+AppointmentController -down-> AppointmentService
+AppointmentController .left.> CreateRequest
+AppointmentController .right.> CurrentUser
+GlobalExceptionHandler .up. AppointmentController : wyjątki
+AppointmentService -down-> AppointmentRepository
+AppointmentService -down-> TimeSlotRepository
+AppointmentService -left-> PatientService
+AppointmentService -right-> AppointmentMapper
+AppointmentMapper .down.> Response
 @enduml
