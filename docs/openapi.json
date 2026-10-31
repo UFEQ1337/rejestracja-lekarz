@@ -1,0 +1,1578 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Przychodnia Popielarz - API rejestracji do lekarza",
+    "description": "REST API systemu rejestracji pacjentĂłw do lekarzy. Zasoby publiczne: lista specjalizacji, lekarzy i wolnych terminĂłw. PozostaĹ‚e operacje wymagajÄ… tokena JWT uzyskanego z POST /api/v1/auth/login (przycisk Authorize).",
+    "contact": {
+      "name": "Mateusz Popielarz"
+    },
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Pacjenci",
+      "description": "Kartoteka pacjentĂłw"
+    },
+    {
+      "name": "Terminy",
+      "description": "Pojedyncze terminy przyjÄ™Ä‡"
+    },
+    {
+      "name": "Uwierzytelnianie",
+      "description": "Logowanie (token JWT) i rejestracja konta pacjenta"
+    },
+    {
+      "name": "Lekarze",
+      "description": "Lekarze i ich terminy przyjÄ™Ä‡"
+    },
+    {
+      "name": "Wizyty",
+      "description": "Rezerwacja, przeglÄ…d i anulowanie wizyt"
+    },
+    {
+      "name": "Specjalizacje",
+      "description": "SĹ‚ownik specjalizacji lekarskich"
+    }
+  ],
+  "paths": {
+    "/api/v1/patients/{id}": {
+      "get": {
+        "tags": [
+          "Pacjenci"
+        ],
+        "summary": "Dane pacjenta (pacjent widzi tylko siebie)",
+        "operationId": "findById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Pacjent prĂłbuje odczytaÄ‡ cudze dane",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pacjent nie istnieje",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Pacjenci"
+        ],
+        "summary": "Aktualizacja danych pacjenta",
+        "operationId": "update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatientRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/doctors/{id}": {
+      "get": {
+        "tags": [
+          "Lekarze"
+        ],
+        "summary": "SzczegĂłĹ‚y lekarza",
+        "operationId": "findById_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Znaleziono lekarza",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lekarz nie istnieje",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Lekarze"
+        ],
+        "summary": "Aktualizacja danych lekarza",
+        "operationId": "update_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DoctorRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Zaktualizowano",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lekarz nie istnieje",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Lekarze"
+        ],
+        "summary": "Wycofanie lekarza z rejestracji",
+        "operationId": "delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Lekarz wycofany"
+          },
+          "409": {
+            "description": "Lekarz ma zarezerwowane przyszĹ‚e wizyty",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/specializations": {
+      "get": {
+        "tags": [
+          "Specjalizacje"
+        ],
+        "summary": "Lista specjalizacji (zasĂłb publiczny)",
+        "operationId": "findAll",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SpecializationResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Specjalizacje"
+        ],
+        "summary": "Dodanie specjalizacji",
+        "operationId": "create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpecializationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Utworzono specjalizacjÄ™",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpecializationResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Specjalizacja o tej nazwie juĹĽ istnieje",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/patients": {
+      "get": {
+        "tags": [
+          "Pacjenci"
+        ],
+        "summary": "Lista pacjentĂłw, opcjonalnie wyszukiwanie po poczÄ…tku nazwiska",
+        "operationId": "findAll_1",
+        "parameters": [
+          {
+            "name": "lastName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PatientResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Pacjenci"
+        ],
+        "summary": "Rejestracja pacjenta w okienku (bez konta)",
+        "operationId": "create_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatientRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Utworzono kartÄ™ pacjenta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "PESEL lub e-mail juĹĽ istnieje",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/doctors": {
+      "get": {
+        "tags": [
+          "Lekarze"
+        ],
+        "summary": "Lista lekarzy, opcjonalnie filtrowana po specjalizacji",
+        "operationId": "findAll_2",
+        "parameters": [
+          {
+            "name": "specializationId",
+            "in": "query",
+            "description": "Identyfikator specjalizacji",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DoctorResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Lekarze"
+        ],
+        "summary": "Dodanie lekarza",
+        "operationId": "create_2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DoctorRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Utworzono lekarza, nagĹ‚Ăłwek Location wskazuje nowy zasĂłb",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BĹ‚Ä…d walidacji lub nieznana specjalizacja",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Numer PWZ lub e-mail juĹĽ istnieje",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/doctors/{id}/slots": {
+      "get": {
+        "tags": [
+          "Lekarze"
+        ],
+        "summary": "Terminy lekarza w zadanym przedziale dat (domyĹ›lnie wolne, 14 dni od dziĹ›)",
+        "operationId": "findSlots",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "available",
+            "in": "query",
+            "description": "true - tylko wolne terminy",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TimeSlotResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Lekarze"
+        ],
+        "summary": "Dodanie terminu przyjÄ™Ä‡",
+        "operationId": "createSlot",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeSlotRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Utworzono termin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSlotResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Niepoprawne godziny terminu",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Termin nachodzi na istniejÄ…cy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": [
+          "Uwierzytelnianie"
+        ],
+        "summary": "Rejestracja nowego pacjenta wraz z kontem",
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Konto i karta pacjenta utworzone",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BĹ‚Ä…d walidacji",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Login, PESEL lub e-mail juĹĽ zajÄ™ty",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "Uwierzytelnianie"
+        ],
+        "summary": "Logowanie - zwraca token JWT do nagĹ‚Ăłwka Authorization",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Poprawne logowanie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "NieprawidĹ‚owy login lub hasĹ‚o",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/appointments": {
+      "get": {
+        "tags": [
+          "Wizyty"
+        ],
+        "summary": "Wyszukiwanie wizyt (pacjent widzi swoje, lekarz swoje, rejestracja wszystkie)",
+        "operationId": "search",
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "doctorId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "BOOKED",
+                "CANCELLED",
+                "COMPLETED"
+              ]
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AppointmentResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Wizyty"
+        ],
+        "summary": "Rezerwacja wizyty w wolnym terminie",
+        "operationId": "book",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppointmentCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Wizyta zarezerwowana",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppointmentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BĹ‚Ä…d walidacji",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Termin lub pacjent nie istnieje",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Termin zajÄ™ty, miniony lub kolizja z innÄ… wizytÄ… pacjenta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/appointments/{id}": {
+      "get": {
+        "tags": [
+          "Wizyty"
+        ],
+        "summary": "SzczegĂłĹ‚y wizyty",
+        "operationId": "findById_2",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Wizyta naleĹĽy do innego pacjenta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Wizyta nie istnieje",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Wizyty"
+        ],
+        "summary": "Zmiana statusu wizyty: CANCELLED (anulowanie) lub COMPLETED (wizyta odbyta)",
+        "operationId": "changeStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppointmentStatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Status zmieniony",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppointmentResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Wizyta nie jest juĹĽ aktywna lub termin minÄ…Ĺ‚",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/slots/{id}": {
+      "get": {
+        "tags": [
+          "Terminy"
+        ],
+        "summary": "SzczegĂłĹ‚y terminu",
+        "operationId": "findById_3",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Termin nie istnieje",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Terminy"
+        ],
+        "summary": "UsuniÄ™cie wolnego terminu z grafiku",
+        "operationId": "delete_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Termin usuniÄ™ty"
+          },
+          "409": {
+            "description": "Termin jest zarezerwowany",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/patients/{id}/appointments": {
+      "get": {
+        "tags": [
+          "Pacjenci"
+        ],
+        "summary": "Historia i plan wizyt pacjenta",
+        "operationId": "findAppointments",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AppointmentResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "Uwierzytelnianie"
+        ],
+        "summary": "Dane zalogowanego uĹĽytkownika",
+        "operationId": "me",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfo"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PatientRequest": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "maxLength": 60,
+            "minLength": 0
+          },
+          "lastName": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 0
+          },
+          "pesel": {
+            "type": "string",
+            "example": "90010112345",
+            "minLength": 1,
+            "pattern": "\\d{11}"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 120,
+            "minLength": 0
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^$|^\\+?[0-9 ]{9,15}$"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "email",
+          "firstName",
+          "lastName",
+          "pesel"
+        ]
+      },
+      "PatientResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "pesel": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "DoctorRequest": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "maxLength": 60,
+            "minLength": 0
+          },
+          "lastName": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 0
+          },
+          "licenseNumber": {
+            "type": "string",
+            "example": "1234567",
+            "minLength": 1,
+            "pattern": "\\d{7}"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 120,
+            "minLength": 0
+          },
+          "phone": {
+            "type": "string",
+            "example": "+48 61 123 45 67",
+            "pattern": "^$|^\\+?[0-9 ]{9,15}$"
+          },
+          "room": {
+            "type": "string",
+            "maxLength": 10,
+            "minLength": 0
+          },
+          "specializationIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "email",
+          "firstName",
+          "lastName",
+          "licenseNumber",
+          "specializationIds"
+        ]
+      },
+      "DoctorResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "licenseNumber": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "room": {
+            "type": "string"
+          },
+          "specializations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SpecializationResponse"
+            }
+          }
+        }
+      },
+      "SpecializationResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "SpecializationRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "TimeSlotRequest": {
+        "type": "object",
+        "properties": {
+          "startTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-11-20T09:00:00"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-11-20T09:20:00"
+          }
+        },
+        "required": [
+          "endTime",
+          "startTime"
+        ]
+      },
+      "TimeSlotResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "doctorId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "doctorName": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "available": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 4,
+            "pattern": "[a-zA-Z0-9._-]+"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 72,
+            "minLength": 8
+          },
+          "patient": {
+            "$ref": "#/components/schemas/PatientRequest"
+          }
+        },
+        "required": [
+          "password",
+          "patient",
+          "username"
+        ]
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "mpopielarz",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "example": "Pacjent123!",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "password",
+          "username"
+        ]
+      },
+      "TokenResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "tokenType": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserInfo"
+          }
+        }
+      },
+      "UserInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "PATIENT",
+              "RECEPTIONIST",
+              "DOCTOR"
+            ]
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "patientId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "doctorId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AppointmentCreateRequest": {
+        "type": "object",
+        "properties": {
+          "slotId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "patientId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Wymagane tylko dla rejestratorki; pacjent rezerwuje zawsze dla siebie"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "slotId"
+        ]
+      },
+      "AppointmentResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "BOOKED",
+              "CANCELLED",
+              "COMPLETED"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "slotId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "doctorId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "doctorName": {
+            "type": "string"
+          },
+          "room": {
+            "type": "string"
+          },
+          "patientId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "patientName": {
+            "type": "string"
+          }
+        }
+      },
+      "AppointmentStatusRequest": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "BOOKED",
+              "CANCELLED",
+              "COMPLETED"
+            ],
+            "example": "CANCELLED"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "ErrorResponse": {
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "violations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldViolation"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
