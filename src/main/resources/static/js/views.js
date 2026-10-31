@@ -160,12 +160,12 @@ export function renderAppointments(appointments, now, onCancel) {
         const actionCell = element('td');
         if (canCancel) {
             actionCell.append(element('button', {
-                className: 'btn btn-danger btn-small', type: 'button', text: 'Anuluj wizytę',
+                className: 'btn btn-danger btn-small', type: 'button', text: 'Anuluj',
                 onClick: () => onCancel(a)
             }));
         }
         return element('tr', {}, [
-            element('td', {text: dateTimeFormat.format(new Date(a.startTime))}),
+            element('td', {className: 'nowrap', text: dateTimeFormat.format(new Date(a.startTime))}),
             element('td', {text: `lek. ${a.doctorName}`}),
             element('td', {text: a.patientName}),
             element('td', {text: a.room ?? '-'}),

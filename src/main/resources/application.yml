@@ -35,11 +35,13 @@ app:
 
 springdoc:
   override-with-generic-response: false
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json
   api-docs:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
-    operations-sorter: method
+    operations-sorter: alpha
     tags-sorter: alpha
 
 logging:

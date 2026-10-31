@@ -121,6 +121,7 @@ function logout() {
     Object.assign(state, {user: null, doctors: [], selectedDoctor: null, slots: [], selectedSlot: null});
     views.hideSlots();
     views.hideBookingForm();
+    views.switchTab('doctors-tab');
     views.showLoggedOut();
 }
 

@@ -304,3 +304,7 @@ input, select, textarea {
 .footer a {
     color: var(--main);
 }
+
+.nowrap, .btn-small {
+    white-space: nowrap;
+}

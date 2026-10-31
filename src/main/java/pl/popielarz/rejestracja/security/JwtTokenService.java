@@ -10,6 +10,7 @@ import pl.popielarz.rejestracja.model.UserAccount;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @Service
 public class JwtTokenService {
@@ -25,7 +26,7 @@ public class JwtTokenService {
     }
 
     public IssuedToken issue(UserAccount user) {
-        Instant now = clock.instant();
+        Instant now = clock.instant().truncatedTo(ChronoUnit.SECONDS);
         Instant expiresAt = now.plus(properties.validity());
         JwtClaimsSet.Builder claims = JwtClaimsSet.builder()
                 .issuer(properties.issuer())
