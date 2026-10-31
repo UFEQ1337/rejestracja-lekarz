@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: przychodnia-db
+    environment:
+      POSTGRES_DB: przychodnia
+      POSTGRES_USER: przychodnia
+      POSTGRES_PASSWORD: przychodnia
+      TZ: Europe/Warsaw
+    ports:
+      - "5432:5432"
+    volumes:
+      - przychodnia-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U przychodnia -d przychodnia"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    mem_limit: 256m
+
+volumes:
+  przychodnia-data:

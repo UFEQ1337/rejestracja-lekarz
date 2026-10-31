@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: rejestracja-lekarz
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/przychodnia}
+    username: ${DB_USER:przychodnia}
+    password: ${DB_PASSWORD:przychodnia}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Europe/Warsaw
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  jackson:
+    time-zone: Europe/Warsaw
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: 8080
+  servlet:
+    session:
+      tracking-modes: []
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:przychodnia-popielarz-klucz-deweloperski-2026}
+    issuer: przychodnia-popielarz
+    validity: PT8H
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+
+logging:
+  level:
+    pl.popielarz.rejestracja: INFO
