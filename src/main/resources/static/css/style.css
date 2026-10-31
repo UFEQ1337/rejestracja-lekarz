@@ -1,0 +1,306 @@
+:root {
+    --main: #1f5f8b;
+    --main-dark: #174866;
+    --text: #222;
+    --muted: #666;
+    --border: #d5d9de;
+    --background: #f4f6f8;
+    --ok: #2e7d32;
+    --error: #b3261e;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--background);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    background: var(--main);
+    color: #fff;
+}
+
+.brand-name {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.brand-sub {
+    margin-left: 10px;
+    opacity: 0.8;
+}
+
+.user-box {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 20px auto;
+    padding: 0 16px;
+}
+
+.panel {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+}
+
+.panel.narrow {
+    max-width: 420px;
+    margin: 40px auto;
+}
+
+h1, h2 {
+    margin: 0 0 12px;
+    font-weight: 600;
+}
+
+h1 {
+    font-size: 22px;
+}
+
+h2 {
+    font-size: 18px;
+}
+
+label {
+    display: block;
+    margin: 10px 0 4px;
+    color: var(--muted);
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 7px 9px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font: inherit;
+}
+
+.btn {
+    margin-top: 12px;
+    padding: 7px 16px;
+    border: 1px solid var(--main);
+    border-radius: 3px;
+    background: var(--main);
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: var(--main-dark);
+}
+
+.btn-light {
+    margin-top: 0;
+    background: #fff;
+    color: var(--main);
+}
+
+.btn-light:hover {
+    background: #eef3f7;
+}
+
+.btn-small {
+    margin: 0;
+    padding: 3px 10px;
+    font-size: 13px;
+}
+
+.btn-danger {
+    border-color: var(--error);
+    background: #fff;
+    color: var(--error);
+}
+
+.btn-danger:hover {
+    background: #fbeceb;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.actions .btn-light {
+    margin-top: 12px;
+}
+
+.hint {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.tab {
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    border-radius: 3px 3px 0 0;
+    background: #e9edf1;
+    font: inherit;
+    cursor: pointer;
+}
+
+.tab.active {
+    background: #fff;
+    border-bottom-color: #fff;
+    font-weight: 600;
+}
+
+.toolbar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.toolbar h2 {
+    margin: 0 auto 0 0;
+}
+
+.toolbar label {
+    margin: 0;
+}
+
+.toolbar select {
+    width: 220px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th, .data-table td {
+    padding: 7px 8px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+}
+
+.data-table th {
+    background: #f0f2f4;
+    font-weight: 600;
+}
+
+.data-table tr.selected td {
+    background: #e8f1f8;
+}
+
+.slot-days {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.slot-day h3 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.slot-day .slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.slot {
+    padding: 4px 8px;
+    border: 1px solid var(--main);
+    border-radius: 3px;
+    background: #fff;
+    color: var(--main);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.slot.selected, .slot:hover {
+    background: var(--main);
+    color: #fff;
+}
+
+.summary {
+    margin: 0 0 8px;
+}
+
+.status {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    border: 1px solid;
+}
+
+.status-BOOKED {
+    color: var(--main);
+}
+
+.status-COMPLETED {
+    color: var(--ok);
+}
+
+.status-CANCELLED {
+    color: var(--muted);
+}
+
+.message {
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    border-radius: 3px;
+    border: 1px solid;
+}
+
+.message.success {
+    color: var(--ok);
+    background: #edf7ee;
+}
+
+.message.error {
+    color: var(--error);
+    background: #fbeceb;
+}
+
+.empty {
+    color: var(--muted);
+    font-style: italic;
+}
+
+.footer {
+    padding: 16px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.footer a {
+    color: var(--main);
+}

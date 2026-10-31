@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Przychodnia – Mateusz Popielarz</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="top-bar">
+    <div class="brand">
+        <span class="brand-name">Przychodnia Popielarz</span>
+        <span class="brand-sub">rejestracja do lekarza</span>
+    </div>
+    <div id="user-box" class="user-box hidden">
+        <span id="user-name"></span>
+        <button id="logout-btn" class="btn btn-light" type="button">Wyloguj</button>
+    </div>
+</header>
+
+<main class="container">
+    <div id="message" class="message hidden" role="status"></div>
+
+    <section id="login-view" class="panel narrow">
+        <h1>Logowanie</h1>
+        <form id="login-form">
+            <label for="login-username">Login</label>
+            <input id="login-username" name="username" autocomplete="username" required>
+            <label for="login-password">Hasło</label>
+            <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+            <button class="btn" type="submit">Zaloguj</button>
+        </form>
+        <p class="hint">Konta demonstracyjne: <code>mpopielarz</code> / <code>Pacjent123!</code>,
+            <code>rejestracja</code> / <code>Rejestracja123!</code>, <code>akowalska</code> / <code>Lekarz123!</code></p>
+    </section>
+
+    <section id="app-view" class="hidden">
+        <nav class="tabs">
+            <button class="tab active" data-tab="doctors-tab" type="button">Lekarze i terminy</button>
+            <button class="tab" data-tab="appointments-tab" type="button" id="appointments-tab-btn">Moje wizyty</button>
+        </nav>
+
+        <div id="doctors-tab" class="tab-content">
+            <div class="panel">
+                <div class="toolbar">
+                    <h2>Lekarze</h2>
+                    <label for="specialization-filter">Specjalizacja</label>
+                    <select id="specialization-filter">
+                        <option value="">wszystkie</option>
+                    </select>
+                </div>
+                <table class="data-table">
+                    <thead>
+                    <tr><th>Lekarz</th><th>Specjalizacje</th><th>Gabinet</th><th></th></tr>
+                    </thead>
+                    <tbody id="doctor-list"></tbody>
+                </table>
+            </div>
+
+            <div id="slots-panel" class="panel hidden">
+                <h2 id="slots-title">Wolne terminy</h2>
+                <div id="slot-list" class="slot-days"></div>
+            </div>
+
+            <div id="booking-panel" class="panel hidden">
+                <h2>Rezerwacja wizyty</h2>
+                <p id="booking-summary" class="summary"></p>
+                <form id="booking-form">
+                    <div id="patient-select-row" class="hidden">
+                        <label for="booking-patient">Pacjent</label>
+                        <select id="booking-patient"></select>
+                    </div>
+                    <label for="booking-reason">Powód wizyty (opcjonalnie)</label>
+                    <textarea id="booking-reason" maxlength="500" rows="3"></textarea>
+                    <div class="actions">
+                        <button class="btn" type="submit">Zarezerwuj</button>
+                        <button class="btn btn-light" type="button" id="booking-cancel">Anuluj wybór</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="appointments-tab" class="tab-content hidden">
+            <div class="panel">
+                <div class="toolbar">
+                    <h2 id="appointments-title">Moje wizyty</h2>
+                    <label for="status-filter">Status</label>
+                    <select id="status-filter">
+                        <option value="">wszystkie</option>
+                        <option value="BOOKED">zarezerwowane</option>
+                        <option value="COMPLETED">odbyte</option>
+                        <option value="CANCELLED">anulowane</option>
+                    </select>
+                </div>
+                <table class="data-table">
+                    <thead>
+                    <tr><th>Termin</th><th>Lekarz</th><th>Pacjent</th><th>Gabinet</th><th>Powód</th><th>Status</th><th></th></tr>
+                    </thead>
+                    <tbody id="appointment-list"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    Przychodnia – Mateusz Popielarz · projekt zaliczeniowy „Języki obiektowe 2 (Java)”, WSB Merito Poznań ·
+    <a href="swagger-ui.html">dokumentacja API</a>
+</footer>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
